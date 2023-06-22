@@ -19,46 +19,56 @@ vocabulario_semana_2 = {
 
 # ... Continúa creando diccionarios de vocabulario para cada semana
 
-def jugar_juego_vocabulario(diccionario_vocabulario):
-    """
-    Esta función recibe un diccionario de vocabulario y genera un juego de preguntas y respuestas
-    para que el usuario pueda practicar.
-    """
-    # Generamos una lista con todas las palabras del diccionario
-    palabras = list(diccionario_vocabulario.keys())
-    # Mezclamos la lista de palabras
-    random.shuffle(palabras)
-    # Iteramos sobre la lista de palabras
-    for palabra in palabras:
-        # Mostramos la palabra en alemán
-        print(palabra)
-        # Leemos la respuesta del usuario
-        respuesta = input("¿Qué significa esta palabra? ")
-        # Obtenemos la respuesta correcta del diccionario
-        respuesta_correcta = diccionario_vocabulario[palabra]
-        # Comparamos la respuesta del usuario con la respuesta correcta
-        if respuesta == respuesta_correcta:
-            # Si la respuesta es correcta, mostramos un mensaje de felicitación
-            print("¡Muy bien!")
-        else:
-            # Si la respuesta es incorrecta, mostramos la respuesta correcta
-            print("Estas equivocado La respuesta correcta es:", respuesta_correcta)
+class JuegoVocabularioCLI:
+    def __init__(self, vocabulario):
+        self.vocabulario = vocabulario
+        self.palabras = list(self.vocabulario.keys())
+        random.shuffle(self.palabras)
+        self.palabra_actual = 0
+        self.puntaje = 0
 
-# Esta es la función principal del programa
+    def jugar(self):
+        print("¡Bienvenido al juego de vocabulario en alemán!")
+        print("Ingresa la traducción correcta en español de la palabra en alemán.")
+        print("Tienes tres oportunidades para cada palabra.")
+
+        for palabra in self.palabras:
+            print("\nNueva palabra:")
+            print(palabra)
+
+            respuesta_correcta = self.vocabulario[palabra]
+            oportunidades = 3
+
+            while oportunidades > 0:
+                respuesta_usuario = input("Traducción: ").lower()
+
+                if respuesta_usuario == respuesta_correcta.lower():
+                    print("¡Respuesta correcta!")
+                    self.puntaje += 1
+                    break
+                else:
+                    oportunidades -= 1
+                    if oportunidades > 0:
+                        print("Respuesta incorrecta. Inténtalo nuevamente. Oportunidades restantes:", oportunidades)
+
+            if oportunidades == 0:
+                print("Respuesta incorrecta. La respuesta correcta es:", respuesta_correcta)
+
+        print("\n¡Juego terminado!")
+        print("Puntaje final:", self.puntaje, "/", len(self.vocabulario))
+
 def main():
-
-    # Creamos un diccionario que contiene los diccionarios de vocabulario de cada semana
     vocabulario = {
         1: vocabulario_semana_1,
         2: vocabulario_semana_2
     }
 
-    # Leemos el número de semana que quiere practicar el usuario
     semana = int(input("¿Qué semana quieres practicar? "))
-    # Obtenemos el diccionario de vocabulario de la semana que quiere practicar el usuario
     diccionario_vocabulario = vocabulario[semana]
-    # Llamamos a la función que genera el juego de preguntas y respuestas
-    jugar_juego_vocabulario(diccionario_vocabulario)
 
-# Llamamos a la función principal
-main()
+    juego = JuegoVocabularioCLI(diccionario_vocabulario)
+    juego.jugar()
+
+if __name__ == "__main__":
+    main()
+
