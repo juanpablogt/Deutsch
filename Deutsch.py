@@ -1,10 +1,10 @@
 import random
 
 vocabulario_semana_1 = {
-    "Guten Morgen": "Buenos días",
+    "Guten Morgen": "Buenos dias",
     "Hallo": "Hola",
-    "Wie geht es dir?": "¿Cómo estás?",
-    "Ich heiße...": "Me llamo...",
+    "Wie geht es dir?": "¿Como estas?",
+    "Ich heiße...": "Me llamo",
     "Woher kommst du?": "¿De dónde eres?"
 }
 
@@ -19,56 +19,82 @@ vocabulario_semana_2 = {
 
 # ... Continúa creando diccionarios de vocabulario para cada semana
 
-class JuegoVocabularioCLI:
-    def __init__(self, vocabulario):
-        self.vocabulario = vocabulario
-        self.palabras = list(self.vocabulario.keys())
-        random.shuffle(self.palabras)
-        self.palabra_actual = 0
-        self.puntaje = 0
+def jugar_juego_vocabulario(vocabulario):
+    palabras = list(vocabulario.keys())
+    jugadores = []
+    puntajes = {}
 
-    def jugar(self):
-        print("¡Bienvenido al juego de vocabulario en alemán!")
-        print("Ingresa la traducción correcta en español de la palabra en alemán.")
-        print("Tienes tres oportunidades para cada palabra.")
+    print("¡Bienvenido al juego de vocabulario en alemán!")
+    print("Ingresa la traducción correcta en español de la palabra en alemán.")
+    print("Tienes tres pistas para cada palabra.")
 
-        for palabra in self.palabras:
-            print("\nNueva palabra:")
-            print(palabra)
+    # Pedir nombres de los jugadores
+    num_jugadores = int(input("Ingrese el número de jugadores: "))
+    for i in range(num_jugadores):
+        nombre = input(f"Ingrese el nombre del jugador {i+1}: ")
+        jugadores.append(nombre)
+        puntajes[nombre] = 0
 
-            respuesta_correcta = self.vocabulario[palabra]
-            oportunidades = 3
+    while len(palabras) > 0:
+        for jugador in jugadores:
+            palabra_alemana = random.choice(palabras)
+            palabra_espanol = vocabulario[palabra_alemana]
+            pistas = obtener_pistas(palabra_alemana)
 
-            while oportunidades > 0:
-                respuesta_usuario = input("Traducción: ").lower()
+            print("\nTurno de", jugador)
+            print("Nueva palabra:")
+            print("Pista 1:", pistas[0])
 
-                if respuesta_usuario == respuesta_correcta.lower():
-                    print("¡Respuesta correcta!")
-                    self.puntaje += 1
-                    break
-                else:
-                    oportunidades -= 1
-                    if oportunidades > 0:
-                        print("Respuesta incorrecta. Inténtalo nuevamente. Oportunidades restantes:", oportunidades)
+            respuesta_usuario = input("Traducción de '" + palabra_alemana + "': ").lower()
 
-            if oportunidades == 0:
-                print("Respuesta incorrecta. La respuesta correcta es:", respuesta_correcta)
+            if respuesta_usuario.lower() == palabra_espanol.lower() or respuesta_usuario == palabra_espanol:
+                print("¡Correcto!")
+                puntajes[jugador] += 1
+                palabras.remove(palabra_alemana)
+            else:
+                print("Incorrecto. Inténtalo nuevamente en tu próximo turno.")
 
-        print("\n¡Juego terminado!")
-        print("Puntaje final:", self.puntaje, "/", len(self.vocabulario))
+        # Mostrar puntuaciones parciales
+        print("\nPuntuaciones parciales:")
+        for jugador in jugadores:
+            print(jugador + ":", puntajes[jugador])
 
-def main():
-    vocabulario = {
-        1: vocabulario_semana_1,
-        2: vocabulario_semana_2
-    }
+    print("\n¡Juego terminado!")
+    print("Puntajes finales:")
+    for jugador in jugadores:
+        print(jugador + ":", puntajes[jugador], "/", len(vocabulario))
 
-    semana = int(input("¿Qué semana quieres practicar? "))
-    diccionario_vocabulario = vocabulario[semana]
+def obtener_pistas(palabra):
+    pistas = []
+    for i in range(3):
+        letra = random.choice(palabra)
+        while letra in pistas:
+            letra = random.choice(palabra)
+        pistas.append(letra)
+    return pistas
 
-    juego = JuegoVocabularioCLI(diccionario_vocabulario)
-    juego.jugar()
+# Inicio del programa
 
-if __name__ == "__main__":
-    main()
+print("¡Bienvenido al curso de alemán!")
 
+while True:
+    print("\nSeleccione una opción:")
+    print("1. Jugar juego de vocabulario semana 1")
+    print("2. Jugar juego de vocabulario semana 2")
+    print("3. Jugar juego de vocabulario semana 3")
+    print("4. Salir")
+
+    opcion = int(input("Opción: "))
+
+    if opcion == 1:
+        jugar_juego_vocabulario(vocabulario_semana_1)
+    elif opcion == 2:
+        jugar_juego_vocabulario(vocabulario_semana_2)
+    elif opcion == 3:
+        break
+    else:
+        print("Opción inválida. Inténtalo nuevamente.")
+
+print("¡Hasta luego!")
+
+# Fin del programa
